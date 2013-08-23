@@ -1303,6 +1303,29 @@ defmodule Enum do
     end
   end
 
+  @doc """
+  Groups `collection` by the result of `fun` for each element
+  in `collection`. Returns a HashDict where the keys are the
+  evaluated result from `fun` and the values are lists of
+  elements in `collection` that correspond to the key.
+
+  ## Examples
+
+      Enum.group_by(1..10, &(rem(&1, 2) == 0))
+      #HashDict<[false: [1, 3, 5, 7, 9], true: [2, 4, 6, 8, 10]]>
+
+  """
+
+  @spec group_by(t, (element -> any)) :: list
+  def group_by(collection, fun) do
+    collection |> map(fn x -> { fun.(x), x } end) |>
+    List.foldr(HashDict.new, fn ({k, v}, d) ->
+      Dict.update(d, k, [v], fn([h | t]) ->
+        List.concat([v], [h | t])
+      end)
+    end)
+  end
+
   ## Helpers
 
   @compile { :inline, chunks_n: 5, chunks_step: 4, to_string: 2 }

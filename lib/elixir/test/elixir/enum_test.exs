@@ -653,6 +653,11 @@ defmodule EnumTest.Range do
     assert Enum.chunks_by(1..4, fn _ -> true end) == [[1, 2, 3, 4]]
     assert Enum.chunks_by(1..4, &(rem(&1, 2) == 1)) == [[1], [2], [3], [4]]
   end
+
+  test :group_by do
+    assert Enum.group_by(1..10, &(rem(&1, 2) == 0)) == HashDict.new(false: [1, 3, 5, 7, 9], true: [2, 4, 6, 8, 10])
+    assert Enum.group_by(["foo", "bar", "f", "oo", "b", "ar"], String.length(&1)) == HashDict.new([{1, ["f", "b"]}, {2, ["oo", "ar"]}, {3, ["foo", "bar"]}])
+  end
 end
 
 defmodule EnumTest.Others do
